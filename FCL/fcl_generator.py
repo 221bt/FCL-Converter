@@ -46,7 +46,8 @@ def convert_fcl_json(epcis: EPCISDocument):
     event_relation = []
     fcl.add_station_properties({
         "Address": 'string',
-        "Country": 'string'
+        "Country": 'string',
+        "Role": 'string'
     })
     fcl.add_deliveries_properties({
         "Name": 'string',
@@ -62,6 +63,9 @@ def convert_fcl_json(epcis: EPCISDocument):
         station_node = fcl.add_station(business.id, business.name, float(business.lat), float(business.lng))
         station_node.add_attribute("Address", ",".join([business.address, business.city, business.state,
                                                         business.country]))
+        for key in business.attributes:
+            if key.split(':')[1] == 'role':
+                station_node.add_attribute("Role", business.attributes[key])
 
     for event in epcis.events.values():
         for child in event.children:

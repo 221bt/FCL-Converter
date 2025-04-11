@@ -77,24 +77,28 @@ class LocationNode(MasterDataNode):
     @classmethod
     def from_json(cls, data):
         name, address, city, state, zip, country, lat, lng = '', '', '', '', '', '', 0, 0
+        attributes = {}
         for attribute in data["attributes"]:
             if attribute['id'].split(':')[-1] == 'name':
                 name = attribute['attribute']
-            if attribute['id'].split(':')[-1] == 'streetAddressOne':
+            elif attribute['id'].split(':')[-1] == 'streetAddressOne':
                 address = attribute['attribute']
-            if attribute['id'].split(':')[-1] == 'city':
+            elif attribute['id'].split(':')[-1] == 'city':
                 city = attribute['attribute']
-            if attribute['id'].split(':')[-1] == 'state':
+            elif attribute['id'].split(':')[-1] == 'state':
                 state = attribute['attribute']
-            if attribute['id'].split(':')[-1] == 'postalCode':
+            elif attribute['id'].split(':')[-1] == 'postalCode':
                 zip = attribute['attribute']
-            if attribute['id'].split(':')[-1] == 'country':
+            elif attribute['id'].split(':')[-1] == 'country':
                 country = attribute['attribute']
-            if attribute['id'].split(':')[-1] == 'geoLocation':
+            elif attribute['id'].split(':')[-1] == 'geoLocation':
                 temp = attribute['attribute'].split(':')[-1].split(',')
                 lat, lng = float(temp[0]), float(temp[1])
-
-        return cls(data['id'], name, address, city, state, zip, country, lat, lng)
+            else:
+                attributes.update({attribute['id']: attribute['attribute']})
+        node = cls(data['id'], name, address, city, state, zip, country, lat, lng)
+        node.attributes.update(attributes)
+        return node
 
 
 class ProductNode(MasterDataNode):
